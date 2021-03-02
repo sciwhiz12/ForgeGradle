@@ -39,7 +39,7 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class SetupMCPTask extends DefaultTask {
+public class SetupMCP extends DefaultTask {
     private File config;
     private String pipeline;
 
@@ -47,7 +47,7 @@ public class SetupMCPTask extends DefaultTask {
 
     private File output = getProject().file("build/" + getName() + "/output.zip");
 
-    public SetupMCPTask() {
+    public SetupMCP() {
         this.getOutputs().upToDateWhen(task -> {
             HashStore cache = new HashStore(getProject());
             try {
