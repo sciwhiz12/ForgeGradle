@@ -20,31 +20,53 @@
 
 package net.minecraftforge.gradle.mcp;
 
-import org.gradle.api.Project;
+import javax.inject.Inject;
 
 import net.minecraftforge.gradle.common.util.Artifact;
-
-import javax.inject.Inject;
+import org.gradle.api.model.ObjectFactory;
+import org.gradle.api.provider.Property;
+import org.gradle.api.provider.Provider;
 
 public class MCPExtension {
 
-    private Artifact config;
-    public String pipeline;
-
+    protected final Property<Artifact> config;
+    protected final Property<String> pipeline;
 
     @Inject
-    public MCPExtension(Project project) {
+    public MCPExtension(ObjectFactory objects) {
+        config = objects.property(Artifact.class);
+        pipeline = objects.property(String.class);
     }
 
-    public Artifact getConfig() {
-        return config;
+    public Provider<Artifact> getConfig() {
+        return this.config;
+    }
+
+    public void setConfig(Provider<Artifact> value) {
+        this.config.set(value);
+    }
+
+    public void setConfig(Artifact value) {
+        this.config.set(value);
     }
 
     public void setConfig(String value) {
-        if (value.indexOf(':') != -1) // Full artifact
-            config = Artifact.from(value);
-        else
-            config = Artifact.from("de.oceanlabs.mcp:mcp_config:" + value + "@zip");
+        if (value.indexOf(':') != -1) { // Full artifact
+            config.set(Artifact.from(value));
+        } else {
+            config.set(Artifact.from("de.oceanlabs.mcp:mcp_config:" + value + "@zip"));
+        }
     }
 
+    public Provider<String> getPipeline() {
+        return this.pipeline;
+    }
+
+    public void setPipeline(Provider<String> value) {
+        this.pipeline.set(value);
+    }
+
+    public void setPipeline(String value) {
+        this.pipeline.set(value);
+    }
 }

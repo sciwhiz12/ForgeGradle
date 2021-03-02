@@ -275,10 +275,10 @@ public class PatcherExtension extends MinecraftExtension {
     }
 
     void copyFrom(PatcherExtension other) {
-        if (mapping_channel == null) {
+        if (!mappingChannel.isPresent()) {
             setMappingChannel(other.getMappingChannel());
         }
-        if (mapping_version == null) {
+        if (!mappingVersion.isPresent()) {
             setMappingVersion(other.getMappingVersion());
         }
 

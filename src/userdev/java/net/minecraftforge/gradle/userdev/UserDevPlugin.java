@@ -117,7 +117,7 @@ public class UserDevPlugin implements Plugin<Project> {
             task.setReverse(false);
             task.dependsOn(extractSrg);
             task.setSrg(extractSrg.get().getOutput());
-            task.setMappings(extension.getMappings());
+            task.setMappings(extension.getMappings().get());
             task.setFormat(IMappingFile.Format.SRG);
             task.setOutput(project.file("build/" + createSrgToMcp.getName() + "/output.srg"));
         });
@@ -126,7 +126,7 @@ public class UserDevPlugin implements Plugin<Project> {
             task.setReverse(true);
             task.dependsOn(extractSrg);
             task.setSrg(extractSrg.get().getOutput());
-            task.setMappings(extension.getMappings());
+            task.setMappings(extension.getMappings().get());
         });
 
         extractNatives.configure(task -> {
@@ -209,7 +209,7 @@ public class UserDevPlugin implements Plugin<Project> {
                     throw new IllegalArgumentException("Only allows one minecraft dependency.");
                 deps.remove(dep);
 
-                mcrepo = new MinecraftUserRepo(p, dep.getGroup(), dep.getName(), dep.getVersion(), extension.getAccessTransformers(), extension.getMappings());
+                mcrepo = new MinecraftUserRepo(p, dep.getGroup(), dep.getName(), dep.getVersion(), new ArrayList<>(extension.getAccessTransformers().getFiles()), extension.getMappings().get());
                 String newDep = mcrepo.getDependencyString();
                 p.getLogger().lifecycle("New Dep: " + newDep);
                 ExternalModuleDependency ext = (ExternalModuleDependency) p.getDependencies().create(newDep);
@@ -238,7 +238,7 @@ public class UserDevPlugin implements Plugin<Project> {
                     project.getLogger().error("DeobfRepo attempted to resolve an origin repo early but failed, this may cause issues with some IDEs");
                 }
             }
-            remapper.attachMappings(extension.getMappings());
+            remapper.attachMappings(extension.getMappings().get());
 
             // We have to add these AFTER our repo so that we get called first, this is annoying...
             new BaseRepo.Builder()

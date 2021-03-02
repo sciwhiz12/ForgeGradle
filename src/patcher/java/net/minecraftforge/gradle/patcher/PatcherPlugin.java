@@ -72,6 +72,7 @@ import org.gradle.api.tasks.compile.JavaCompile;
 import javax.annotation.Nonnull;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -149,7 +150,7 @@ public class PatcherPlugin implements Plugin<Project> {
             task.dependsOn(sourcesJar, universalJar, userdevJar);
         });
         dlMappingsConfig.configure(task -> {
-            task.setMappings(extension.getMappings());
+            task.setMappings(extension.getMappings().get());
         });
         extractNatives.configure(task -> {
             task.dependsOn(dlMCMetaConfig.get());
@@ -521,7 +522,7 @@ public class PatcherPlugin implements Plugin<Project> {
                 }
 
                 if (dlMappingsConfig.get().getMappings() == null) {
-                    dlMappingsConfig.get().setMappings(extension.getMappings());
+                    dlMappingsConfig.get().setMappings(extension.getMappings().get());
                 }
 
                 for (TaskProvider<GenerateSRG> genSrg : Arrays.asList(createMcp2Srg, createSrg2Mcp, createMcp2Obf)) {
@@ -545,9 +546,9 @@ public class PatcherPlugin implements Plugin<Project> {
             if (mcp == null) {
                 throw new IllegalStateException("Could not find MCP parent project, you must specify a parent chain to MCP.");
             }
-            String mcp_version = mcp.getExtensions().findByType(MCPExtension.class).getConfig().getVersion();
+            String mcp_version = mcp.getExtensions().findByType(MCPExtension.class).getConfig().get().getVersion();
             project.getDependencies().add(MC_DEP_CONFIG, "net.minecraft:client:" + mcp_version + ":extra"); //Needs to be client extra, to get the data files.
-            project.getDependencies().add(MC_DEP_CONFIG, MCPRepo.getMappingDep(extension.getMappingChannel(), extension.getMappingVersion())); //Add mappings so that it can be used by reflection tools.
+            project.getDependencies().add(MC_DEP_CONFIG, MCPRepo.getMappingDep(extension.getMappingChannel().get(), extension.getMappingVersion().get())); //Add mappings so that it can be used by reflection tools.
 
             if (dlMCMetaConfig.get().getMCVersion() == null) {
                 dlMCMetaConfig.get().setMCVersion(extension.mcVersion);
@@ -556,7 +557,7 @@ public class PatcherPlugin implements Plugin<Project> {
             if (!extension.getAccessTransformers().isEmpty()) {
                 SetupMCP setupMCP = (SetupMCP) mcp.getTasks().getByName("setupMCP");
                 @SuppressWarnings("deprecation")
-                MCPFunction function = MCPFunctionFactory.createAT(mcp, extension.getAccessTransformers(), Collections.emptyList());
+                MCPFunction function = MCPFunctionFactory.createAT(mcp, new ArrayList<>(extension.getAccessTransformers().getFiles()), Collections.emptyList());
                 setupMCP.addPreDecompile(project.getName() + "AccessTransformer", function);
                 extension.getAccessTransformers().forEach(f -> {
                     userdevJar.get().from(f, e -> e.into("ats/"));
@@ -567,7 +568,7 @@ public class PatcherPlugin implements Plugin<Project> {
             if (!extension.getSideAnnotationStrippers().isEmpty()) {
                 SetupMCP setupMCP = (SetupMCP) mcp.getTasks().getByName("setupMCP");
                 @SuppressWarnings("deprecation")
-                MCPFunction function = MCPFunctionFactory.createSAS(mcp, extension.getSideAnnotationStrippers(), Collections.emptyList());
+                MCPFunction function = MCPFunctionFactory.createSAS(mcp, new ArrayList<>(extension.getSideAnnotationStrippers().getFiles()), Collections.emptyList());
                 setupMCP.addPreDecompile(project.getName() + "SideStripper", function);
                 extension.getSideAnnotationStrippers().forEach(f -> {
                     userdevJar.get().from(f, e -> e.into("sas/"));
