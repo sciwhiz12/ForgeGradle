@@ -103,16 +103,11 @@ public class Utils {
     public static final String BINPATCHER =  "net.minecraftforge:binarypatcher:1.+:fatjar";
     public static final String ACCESSTRANSFORMER = "net.minecraftforge:accesstransformers:1.0.+:fatjar";
     public static final String SPECIALSOURCE = "net.md-5:SpecialSource:1.8.3:shaded";
-    public static final String SRG2SOURCE =  "net.minecraftforge:Srg2Source:5.+:fatjar";
+    public static final String SRG2SOURCE =  "net.minecraftforge:Srg2Source:7.+:fatjar";
     public static final String SIDESTRIPPER = "net.minecraftforge:mergetool:1.0.7:fatjar";
     public static final String INSTALLERTOOLS = "net.minecraftforge:installertools:1.1.10:fatjar";
     public static final long ZIPTIME = 628041600000L;
     public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
-    public static final String OFFICIAL_MAPPING_USAGE =
-            "These mapping files are licensed as All Rights Reserved with permission to use the contents for INTERNAL, "
-          + "REFERENCE purposes. Please avoid publishing any source code referencing these mappings. A full copy of "
-          + "the license can be found at the top of the mapping file itself and in the 19w36a snapshot article at: "
-          + "https://www.minecraft.net/en-us/article/minecraft-snapshot-19w36a.";
 
     public static void extractFile(ZipFile zip, String name, File output) throws IOException {
         extractFile(zip, zip.getEntry(name), output);

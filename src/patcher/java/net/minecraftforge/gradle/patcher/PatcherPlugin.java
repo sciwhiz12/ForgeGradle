@@ -31,6 +31,7 @@ import net.minecraftforge.gradle.common.task.ExtractZip;
 import net.minecraftforge.gradle.common.util.BaseRepo;
 import net.minecraftforge.gradle.common.util.MavenArtifactDownloader;
 import net.minecraftforge.gradle.common.util.MinecraftRepo;
+import net.minecraftforge.gradle.common.util.MojangLicenseHelper;
 import net.minecraftforge.gradle.common.util.Utils;
 import net.minecraftforge.gradle.common.util.VersionJson;
 import net.minecraftforge.gradle.mcp.MCPExtension;
@@ -230,7 +231,6 @@ public class PatcherPlugin implements Plugin<Project> {
             task.dependsOn(jarConfig, dlMappingsConfig);
             task.setInput(jarConfig.getArchiveFile().get().getAsFile());
             task.setClasspath(project.getConfigurations().getByName(MC_DEP_CONFIG));
-            //TODO: Extra SRGs
         });
         genJoinedBinPatches.configure(task -> {
             task.dependsOn(reobfJar);
@@ -305,6 +305,7 @@ public class PatcherPlugin implements Plugin<Project> {
         if (doingUpdate) {
             String version = (String) project.property("UPDATE_MAPPINGS");
             String channel = project.hasProperty("UPDATE_MAPPINGS_CHANNEL") ? (String) project.property("UPDATE_MAPPINGS_CHANNEL") : "snapshot";
+            MojangLicenseHelper.displayWarning(project, channel);
 
             TaskProvider<DownloadMCPMappings> dlMappingsNew = project.getTasks().register("downloadMappingsNew", DownloadMCPMappings.class);
             dlMappingsNew.get().setMappings(channel + '_' + version);
@@ -370,6 +371,7 @@ public class PatcherPlugin implements Plugin<Project> {
                 PatcherPlugin patcher = extension.parent.getPlugins().findPlugin(PatcherPlugin.class);
 
                 if (mcp != null) {
+                    MojangLicenseHelper.displayWarning(p, extension.getMappingChannel().get());
                     SetupMCP setupMCP = (SetupMCP) tasks.getByName("setupMCP");
 
                     if (procConfig != null) {
@@ -418,6 +420,7 @@ public class PatcherPlugin implements Plugin<Project> {
                         ext.get().dependsOn(dlMCP);
                         ext.get().setConfig(dlMCP.getOutput());
                         ext.get().setKey("statics");
+                        ext.get().setAllowEmpty(true);
                         ext.get().setOutput(project.file("build/" + ext.get().getName() + "/output.txt"));
                         createExc.get().setStatics(ext.get().getOutput());
                         createExc.get().dependsOn(ext);
@@ -428,6 +431,7 @@ public class PatcherPlugin implements Plugin<Project> {
                         ext.get().dependsOn(dlMCP);
                         ext.get().setConfig(dlMCP.getOutput());
                         ext.get().setKey("constructors");
+                        ext.get().setAllowEmpty(true);
                         ext.get().setOutput(project.file("build/" + ext.get().getName() + "/output.txt"));
                         createExc.get().setConstructors(ext.get().getOutput());
                         createExc.get().dependsOn(ext);
