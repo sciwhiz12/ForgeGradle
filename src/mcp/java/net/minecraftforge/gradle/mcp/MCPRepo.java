@@ -40,6 +40,8 @@ import net.minecraftforge.gradle.common.util.MinecraftRepo;
 import net.minecraftforge.gradle.common.util.POMBuilder;
 import net.minecraftforge.gradle.common.util.Utils;
 import net.minecraftforge.gradle.common.util.VersionJson;
+import net.minecraftforge.gradle.mcp.mapping.IMappingProvider;
+import net.minecraftforge.gradle.mcp.mapping.MappingProviders;
 import net.minecraftforge.gradle.mcp.util.MCPRuntime;
 import net.minecraftforge.gradle.mcp.util.MCPWrapper;
 import net.minecraftforge.srgutils.IMappingFile;
@@ -364,6 +366,11 @@ public class MCPRepo extends BaseRepo {
         if (idx == -1) return null; //Invalid format
         String channel = mapping.substring(0, idx);
         String version = mapping.substring(idx + 1);
+
+        final IMappingProvider provider = MappingProviders.getProvider(channel);
+        if (provider == null) {
+            throw new IllegalArgumentException("Unknown mapping provider: " + mapping);
+        }
 
         if ("official".equals(channel)) {
             return findOfficialMapping(version);
