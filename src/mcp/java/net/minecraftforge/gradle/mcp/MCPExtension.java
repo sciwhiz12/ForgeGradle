@@ -28,6 +28,7 @@ import org.gradle.api.provider.Property;
 import org.gradle.api.provider.Provider;
 
 public class MCPExtension {
+    public static final String EXTENSION_NAME = "mcp";
 
     protected final Property<Artifact> config;
     protected final Property<String> pipeline;
