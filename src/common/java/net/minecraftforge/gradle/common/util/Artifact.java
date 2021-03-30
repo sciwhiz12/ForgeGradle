@@ -83,28 +83,28 @@ public class Artifact implements ArtifactIdentifier, Comparable<Artifact> {
         this.group = group;
         this.name = name;
         this.version = version;
-        this.comparableVersion = new ComparableVersion(version);
-        this.isSnapshot = version.toLowerCase(Locale.ROOT).endsWith("-snapshot");
+        this.comparableVersion = new ComparableVersion(this.version);
+        this.isSnapshot = this.version.toLowerCase(Locale.ROOT).endsWith("-snapshot");
         this.classifier = classifier;
         this.ext = ext != null ? ext : "jar";
 
         StringBuilder buf = new StringBuilder();
-        buf.append(group).append(':').append(name).append(':').append(version);
-        if (classifier != null) {
-            buf.append(':').append(classifier);
+        buf.append(this.group).append(':').append(this.name).append(':').append(this.version);
+        if (this.classifier != null) {
+            buf.append(':').append(this.classifier);
         }
-        if (ext != null && !"jar".equals(ext)) {
-            buf.append('@').append(ext);
+        if (ext != null && !"jar".equals(this.ext)) {
+            buf.append('@').append(this.ext);
         }
         this.fullDescriptor = buf.toString();
 
         String file;
-        file = name + '-' + version;
-        if (classifier != null) file += '-' + classifier;
-        file += '.' + ext;
+        file = this.name + '-' + this.version;
+        if (this.classifier != null) file += '-' + this.classifier;
+        file += '.' + this.ext;
         this.file = file;
 
-        this.path = String.join("/", group.replace('.', '/'), name, version, this.file);
+        this.path = String.join("/", this.group.replace('.', '/'), this.name, this.version, this.file);
     }
 
     public String getLocalPath() {
